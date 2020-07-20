@@ -1,10 +1,22 @@
-// You can include shared interfaces/types in a separate file
-// and then use them in any component by importing them. For
-// example, to import the interface below do:
-//
-// import User from 'path/to/interfaces';
+export type PolygonShape =
+  "r" |       // rectangle
+  "p" |       // polygon
+  "et";       // equilateral triangle
 
-export type User = {
-  id: number
-  name: string
+export type EllipseShape =
+  "c" |       // circle
+  "e";        // ellipse
+
+export type Shape = PolygonShape | EllipseShape;
+
+export type Data = number[];
+
+export interface Command {
+  shape: Shape;
+  data: Data; 
+}
+
+export interface CommandsAndErrors {
+  commands: Command[];
+  errors: string[];
 }
