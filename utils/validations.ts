@@ -31,22 +31,23 @@ const validateNumericData = (shape: Shape, data: Data, line: number): boolean | 
 const extractCommandOrError = (row: string, line: number): string | Command => {
   const [shape, ...data] = row.split(/[ ,]/).filter(Boolean);
 
+  const normaliseShape = shape.toLocaleLowerCase();
   let numericData: Data = [];
   let error: string | boolean = false;
 
-  if (!isShapeValidate(shape)) {
+  if (!isShapeValidate(normaliseShape)) {
     error = `Invalid command '${shape}' in line ${line} should be one of: ${validShapes.join(", ")}`;
   } else if (!isDataNumeric(data)) {
     error = `Error in line ${line}. Co-ordinates must be numeric.`;
   } else {
     numericData = data.map(number => parseInt(number, 10));
-    error = validateNumericData(shape as Shape, numericData, line);
+    error = validateNumericData(normaliseShape as Shape, numericData, line);
   }
   
   if (error) {
     return error as string;
   } else {
-    return { shape: shape as Shape, data: numericData };
+    return { shape: normaliseShape as Shape, data: numericData };
   }
 };
 
