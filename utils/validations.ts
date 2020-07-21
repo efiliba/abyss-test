@@ -1,4 +1,4 @@
-import { Shape, Data, CommandsAndErrors } from "../interfaces";
+import { Shape, Data, Command, CommandsAndErrors } from "../interfaces";
 
 const validShapes = ["r", "p", "et", "c", "e"];
 const numericRegex = new RegExp(/^\d+$/);
@@ -28,29 +28,38 @@ const validateNumericData = (shape: Shape, data: Data, line: number): boolean | 
   }
 };
 
+const extractCommandOrError = (row: string, line: number): string | Command => {
+  const [shape, ...data] = row.split(/[ ,]/).filter(Boolean);
+
+  let numericData: Data = [];
+  let error: string | boolean = false;
+
+  if (!isShapeValidate(shape)) {
+    error = `Invalid command '${shape}' in line ${line} should be one of: ${validShapes.join(", ")}`;
+  } else if (!isDataNumeric(data)) {
+    error = `Error in line ${line}. Co-ordinates must be numeric.`;
+  } else {
+    numericData = data.map(number => parseInt(number, 10));
+    error = validateNumericData(shape as Shape, numericData, line);
+  }
+  
+  if (error) {
+    return error as string;
+  } else {
+    return { shape: shape as Shape, data: numericData };
+  }
+};
+
 export const mapInputToCommandsAndErrors = (input: string): CommandsAndErrors =>
   input
     .trim()
     .split("\n")
     .reduce<CommandsAndErrors>(({ errors, commands }, row, index) => {
-      const [shape, ...data] = row.split(/[ ,]/).filter(Boolean);
-      
-      let numericData: Data = [];
-      let error: string | boolean = false;
-
-      if (!isShapeValidate(shape)) {
-        error = `Invalid command ${shape} in line ${index + 1} should be one of: ${validShapes.join(", ")}`;
-      } else if (!isDataNumeric(data)) {
-        error = `Error in line ${index + 1}. Co-ordinates must be numeric`;
+      const commandOrError = extractCommandOrError(row, index + 1);
+      if (typeof commandOrError === "string") {
+        errors.push(commandOrError);
       } else {
-        numericData = data.map(number => parseInt(number, 10));
-        error = validateNumericData(shape as Shape, numericData, index + 1);
-      }
-      
-      if (error) {
-        errors.push(error as string);
-      } else {
-        commands.push({ shape: shape as Shape, data: numericData });
+        commands.push(commandOrError);
       }
       
       return { errors, commands };
