@@ -8,6 +8,15 @@ interface Props {
 }
 
 export const Plotter = ({ width = 250, height = 250, commands }: Props) =>
-  <svg width={width} height={height}>
-    {commands.map((command, index) => mapCommandToShape(command, index))}
-  </svg>;
+  <>
+    <svg width={width} height={height}>
+      {commands.map((command, index) => mapCommandToShape(command, index))}
+    </svg>
+  
+    <style jsx>{`
+      svg {
+        border: solid #333 1px;
+        margin-top: 2rem;
+      }
+    `}</style>
+  </>;
