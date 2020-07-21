@@ -6,16 +6,13 @@ import { Errors, Plotter } from "../components";
 import { mapInputToCommandsAndErrors } from "../utils";
 
 const App = () => {
-  const [input, setInput] = useState<string>();
   const [{ commands, errors }, setCommandsAndErrors] = useState<CommandsAndErrors>({
     commands: [],
     errors: []
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target;
-    setInput(value);
-    setCommandsAndErrors(mapInputToCommandsAndErrors(value));
+    setCommandsAndErrors(mapInputToCommandsAndErrors(e.target.value));
   };
 
   return (
@@ -28,7 +25,6 @@ const App = () => {
       <textarea
         rows={5}
         cols={40} 
-        value={input}
         onChange={handleInputChange}
         aria-label="Plotter commands"
       />

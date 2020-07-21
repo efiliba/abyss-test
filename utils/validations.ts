@@ -52,14 +52,15 @@ const extractCommandOrError = (row: string, line: number): string | Command => {
 
 export const mapInputToCommandsAndErrors = (input: string): CommandsAndErrors =>
   input
-    .trim()
     .split("\n")
     .reduce<CommandsAndErrors>(({ errors, commands }, row, index) => {
-      const commandOrError = extractCommandOrError(row, index + 1);
-      if (typeof commandOrError === "string") {
-        errors.push(commandOrError);
-      } else {
-        commands.push(commandOrError);
+      if (row.length > 0) {
+        const commandOrError = extractCommandOrError(row, index + 1);
+        if (typeof commandOrError === "string") {
+          errors.push(commandOrError);
+        } else {
+          commands.push(commandOrError);
+        }
       }
       
       return { errors, commands };
